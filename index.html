@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>FuelSwift</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+
+    body {
+  margin: 0;
+  font-family: 'Inter', sans-serif;
+  background-image: url('https://img.freepik.com/premium-photo/black-gasoline-injector-fueling-oil-pure-fuel-dark-background-3d-rendering_79161-1582.jpg'); /* Set the background image */
+  background-size: cover; /* Ensures the image covers the whole background */
+  background-position: center; /* Centers the image */
+  color: #ffffff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  min-height: 100vh;
+}
+
+
+    .app-container {
+      padding: 2rem;
+      text-align: center;
+    }
+
+    .header h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
+
+    .header h2 {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin-top: 0.25rem;
+    }
+
+    .header p {
+      font-size: 1rem;
+      color: #d1d1d1;
+    }
+
+    .order-form {
+      background-color: #1c1c1e;
+      border-radius: 1rem;
+      padding: 2rem;
+      width: 320px;
+      margin-top: 2rem;
+    }
+
+    .order-form label {
+      display: block;
+      margin: 1rem 0 0.5rem;
+      font-size: 0.9rem;
+      text-align: left;
+    }
+
+    select,
+    input[type="text"],
+    input[type="number"] {
+      width: 100%;
+      padding: 0.75rem;
+      border: none;
+      border-radius: 0.5rem;
+      background-color: #2c2c2e;
+      color: white;
+      font-size: 1rem;
+    }
+
+    #order-btn {
+      margin-top: 1.5rem;
+      background-color: #ff7e1d;
+      color: white;
+      font-weight: bold;
+      border: none;
+      width: 100%;
+      padding: 0.75rem;
+      border-radius: 0.5rem;
+      cursor: pointer;
+    }
+
+    .actions {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 1.5rem;
+    }
+
+    .actions button {
+      flex: 1;
+      background-color: #2c2c2e;
+      border: none;
+      margin: 0 0.25rem;
+      padding: 0.75rem;
+      border-radius: 0.5rem;
+      color: white;
+      cursor: pointer;
+    }
+
+    .summary {
+      background-color: #2c2c2e;
+      border-radius: 0.75rem;
+      padding: 1rem;
+      margin-top: 1.5rem;
+      text-align: left;
+      font-size: 0.9rem;
+    }
+
+    .summary h3 {
+      margin-bottom: 0.5rem;
+      font-size: 1rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="app-container">
+    <header class="header">
+      <h1><span class="logo">⛽</span> FuelSwift</h1>
+      <h2>Welcome to FuelSwift</h2>
+      <p>Order petrol or diesel for delivery</p>
+    </header>
+
+    <main class="order-form">
+      <label>Fuel Type
+        <select id="fuel-type">
+          <option value="Petrol">Petrol</option>
+          <option value="Diesel">Diesel</option>
+        </select>
+      </label>
+
+      <label>Delivery Location
+        <input type="text" id="location" placeholder="Enter delivery location" />
+      </label>
+
+      <label>Number of Liters
+        <input type="number" id="liters" placeholder="Enter number of liters" />
+      </label>
+
+      <button id="order-btn">Order Now</button>
+      <p id="order-status-text" style="text-align:center; margin-top:10px;"></p>
+
+      <div class="actions">
+        <a href="track.html"><button class="btn">Track Order</button></a>
+        <a href="past-orders.html"><button class="btn">Past Orders</button></a>
+        <a href="emergency.html"><button class="btn">Emergency</button></a>
+      </div>
+    </main>
+  </div>
+
+  <!-- <script>
+    const currentUser = localStorage.getItem("currentUser");
+    const users = JSON.parse(localStorage.getItem("fuelSwiftUsers") || "{}");
+
+    if (!currentUser || !users[currentUser]) {
+      window.location.href = "login.html";
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      const fuelType = document.getElementById("fuel-type");
+      const liters = document.getElementById("liters");
+      const location = document.getElementById("location");
+      const orderBtn = document.getElementById("order-btn");
+      const orderStatusText = document.getElementById("order-status-text");
+
+      orderBtn.addEventListener("click", () => {
+        const selectedFuel = fuelType.value;
+        const quantity = parseFloat(liters.value);
+        const deliveryLocation = location.value.trim();
+
+        if (!quantity || quantity <= 0 || deliveryLocation === "") {
+          alert("Please fill in all fields correctly.");
+          return;
+        }
+
+        const pricePerLiter = selectedFuel === "Petrol" ? 102 : 92;
+        const estimatedPrice = quantity * pricePerLiter;
+
+        const orderData = {
+          id: "#FSC" + Math.random().toString(36).substring(2, 8).toUpperCase(),
+          fuelType: selectedFuel,
+          quantity: quantity + " liters",
+          location: deliveryLocation,
+          amount: "₹" + estimatedPrice.toFixed(2),
+          status: "Processing",
+          date: new Date().toISOString().split("T")[0],
+          eta: "30 minutes"
+        };
+
+        users[currentUser].orders = users[currentUser].orders || [];
+        users[currentUser].orders.push(orderData);
+
+        localStorage.setItem("fuelSwiftUsers", JSON.stringify(users));
+
+        orderStatusText.textContent = "✅ Order placed successfully!";
+        orderStatusText.style.color = "#00ff88";
+
+        fuelType.value = "Petrol";
+        liters.value = "";
+        location.value = "";
+      });
+    });
+  </script> -->
+
+  <script>
+    const currentUser = localStorage.getItem("currentUser");
+    const users = JSON.parse(localStorage.getItem("fuelSwiftUsers") || "{}");
+  
+    if (!currentUser || !users[currentUser]) {
+      window.location.href = "login.html";
+    }
+  
+    document.addEventListener("DOMContentLoaded", () => {
+      const fuelType = document.getElementById("fuel-type");
+      const liters = document.getElementById("liters");
+      const location = document.getElementById("location");
+      const orderBtn = document.getElementById("order-btn");
+      const orderStatusText = document.getElementById("order-status-text");
+  
+      orderBtn.addEventListener("click", () => {
+        const selectedFuel = fuelType.value;
+        const quantity = parseFloat(liters.value);
+        const deliveryLocation = location.value.trim();
+  
+        if (!quantity || quantity <= 0 || deliveryLocation === "") {
+          alert("Please fill in all fields correctly.");
+          return;
+        }
+  
+        const pricePerLiter = selectedFuel === "Petrol" ? 102 : 92;
+        const estimatedPrice = quantity * pricePerLiter;
+  
+        const orderData = {
+          id: "#FSC" + Math.random().toString(36).substring(2, 8).toUpperCase(),
+          fuelType: selectedFuel,
+          quantity: quantity + " liters",
+          location: deliveryLocation,
+          amount: "₹" + estimatedPrice.toFixed(2),
+          status: "Processing",
+          date: new Date().toISOString().split("T")[0],
+          eta: "30 minutes"
+        };
+  
+        // Save order to user orders
+        users[currentUser].orders = users[currentUser].orders || [];
+        users[currentUser].orders.push(orderData);
+        localStorage.setItem("fuelSwiftUsers", JSON.stringify(users));
+  
+        // Save order for payment processing
+        localStorage.setItem("pendingOrder", JSON.stringify(orderData));
+  
+        // Redirect to payment page
+        window.location.href = "payment.html";
+      });
+    });
+  </script>
+  
+
+</body>
+</html>

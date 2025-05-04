@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>FuelSwift - Register</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
+
+    body {
+      margin: 0;
+      font-family: 'Inter', sans-serif;
+      background-color: #2c2c2e;
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+
+    .register-container {
+      background-color: #1c1c1e;
+      padding: 2rem;
+      border-radius: 1rem;
+      width: 320px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
+      text-align: center;
+    }
+
+    h1 {
+      margin-bottom: 1.5rem;
+    }
+
+    input {
+      width: 100%;
+      padding: 0.75rem;
+      margin: 0.5rem 0;
+      border: none;
+      border-radius: 0.5rem;
+      background-color: #3b3b3b;
+      color: white;
+      font-size: 1rem;
+    }
+
+    button {
+      width: 100%;
+      padding: 0.75rem;
+      margin-top: 1rem;
+      background-color: #ff7e1d;
+      color: white;
+      font-weight: bold;
+      border: none;
+      border-radius: 0.5rem;
+      cursor: pointer;
+    }
+
+    .switch-link {
+      margin-top: 1rem;
+      font-size: 0.9rem;
+    }
+
+    .switch-link a {
+      color: #ff7e1d;
+      text-decoration: none;
+    }
+
+    #error-msg {
+      color: red;
+      font-size: 0.9rem;
+      margin-top: 0.5rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="register-container">
+    <h1>Register with FuelSwift</h1>
+    <input type="text" id="new-username" placeholder="Username" />
+    <input type="password" id="new-password" placeholder="Password" />
+    <button onclick="register()">Register</button>
+    <div id="error-msg"></div>
+    <div class="switch-link">
+      Already have an account? <a href="login.html">Login here</a>
+    </div>
+  </div>
+
+  <script>
+    // Load existing users from localStorage
+    const users = JSON.parse(localStorage.getItem("fuelSwiftUsers") || "{}");
+
+    function register() {
+      const username = document.getElementById("new-username").value.trim();
+      const password = document.getElementById("new-password").value.trim();
+      const errorMsg = document.getElementById("error-msg");
+
+      if (username === "" || password === "") {
+        errorMsg.textContent = "Username and password are required!";
+        return;
+      }
+
+      // If the username already exists, show an error message
+      if (users[username]) {
+        errorMsg.textContent = "Username already exists. Please choose another.";
+        return;
+      }
+
+      // Register the new user
+      users[username] = { username: username, password: password, orders: [] };
+
+      // Save the updated users list to localStorage
+      localStorage.setItem("fuelSwiftUsers", JSON.stringify(users));
+
+      // Redirect to login page after successful registration
+      window.location.href = "login.html";
+    }
+  </script>
+</body>
+</html>

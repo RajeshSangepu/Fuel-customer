@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Track Order - FuelSwift</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Inter', sans-serif;
+      background-color: #0f0f0f;
+      color: white;
+      display: flex;
+      justify-content: center;
+      padding: 2rem 1rem;
+    }
+
+    .track-container {
+      background-color: #1c1c1e;
+      padding: 2rem;
+      border-radius: 1rem;
+      max-width: 400px;
+      width: 100%;
+    }
+
+    .back-link {
+      font-size: 0.9rem;
+      color: #aaa;
+      text-decoration: none;
+      display: inline-block;
+      margin-bottom: 1rem;
+    }
+
+    h2 {
+      font-weight: 600;
+      font-size: 1.25rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .progress {
+      margin-bottom: 2rem;
+    }
+
+    .progress-step {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1rem;
+      background-color: #2c2c2e;
+      padding: 0.75rem 1rem;
+      border-radius: 0.5rem;
+      color: #aaa;
+      transition: background-color 0.3s ease;
+    }
+
+    .progress-step .icon {
+      font-size: 1.2rem;
+    }
+
+    .progress-step .text {
+      flex: 1;
+      margin-left: 0.75rem;
+      font-size: 0.95rem;
+    }
+
+    .progress-step .check {
+      display: none;
+    }
+
+    .progress-step.active {
+      background-color: #3a3a3d;
+      color: #ffffff;
+    }
+
+    .progress-step.active .check {
+      display: inline;
+      margin-left: 0.5rem;
+      color: #00ff88;
+    }
+
+    .order-summary {
+      background-color: #2c2c2e;
+      border-radius: 0.75rem;
+      padding: 1rem;
+      font-size: 0.95rem;
+    }
+
+    .order-summary h3 {
+      margin-top: 0;
+      font-size: 1rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .order-summary p {
+      margin: 0.25rem 0;
+    }
+
+    .highlight {
+      color: #ff7e1d;
+      font-weight: 600;
+    }
+  </style>
+</head>
+<body>
+  <div class="track-container">
+    <a class="back-link" href="index.html">← Back to Home</a>
+    <h2>Track Your Order</h2>
+
+    <div class="progress">
+      <div class="progress-step" id="step-1">
+        <span class="icon">📝</span>
+        <span class="text">Order Placed</span>
+        <span class="check">✔️</span>
+      </div>
+      <div class="progress-step" id="step-2">
+        <span class="icon">🚚</span>
+        <span class="text">Dispatched</span>
+        <span class="check">✔️</span>
+      </div>
+      <div class="progress-step" id="step-3">
+        <span class="icon">🛵</span>
+        <span class="text">Out for Delivery</span>
+        <span class="check">✔️</span>
+      </div>
+      <div class="progress-step" id="step-4">
+        <span class="icon">📦</span>
+        <span class="text">Delivered</span>
+        <span class="check">✔️</span>
+      </div>
+    </div>
+
+    <div class="order-summary">
+      <h3>Order Details</h3>
+      <p>Order ID: <span class="highlight" id="order-id">-</span></p>
+      <p>Status: <span class="highlight" id="status">-</span></p>
+      <p>Fuel Type: <span id="fuel">-</span></p>
+      <p>Quantity: <span id="qty">-</span></p>
+      <p>Amount: <span id="amount">-</span></p>
+      <p>Delivery Location: <span id="location">-</span></p>
+      <p>Estimated Delivery: <span id="eta">-</span></p>
+    </div>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const currentUser = localStorage.getItem("currentUser");
+        const users = JSON.parse(localStorage.getItem("fuelSwiftUsers") || "{}");
+
+        if (!currentUser || !users[currentUser]) {
+          alert("You must be logged in to track orders.");
+          window.location.href = "login.html";
+          return;
+        }
+
+        const orders = users[currentUser].orders || [];
+        const lastOrder = orders[orders.length - 1];
+
+        if (lastOrder) {
+          document.getElementById("order-id").textContent = lastOrder.id;
+          document.getElementById("status").textContent = lastOrder.status;
+          document.getElementById("fuel").textContent = lastOrder.fuelType;
+          document.getElementById("qty").textContent = lastOrder.quantity;
+          document.getElementById("amount").textContent = lastOrder.amount;
+          document.getElementById("location").textContent = lastOrder.location;
+          document.getElementById("eta").textContent = lastOrder.eta;
+
+          const statusMap = {
+            "Order Placed": 1,
+            "Processing": 1,
+            "Dispatched": 2,
+            "Out for Delivery": 3,
+            "Delivered": 4
+          };
+
+          const currentStep = statusMap[lastOrder.status] || 1;
+
+          for (let i = 1; i <= 4; i++) {
+            const step = document.getElementById(`step-${i}`);
+            if (i <= currentStep) {
+              step.classList.add("active");
+            } else {
+              step.classList.remove("active");
+            }
+          }
+        } else {
+          document.querySelector(".order-summary").innerHTML = "<p>No orders found for your account.</p>";
+        }
+      });
+    </script>
+  </div>
+</body>
+</html>
